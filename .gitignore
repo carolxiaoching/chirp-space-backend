@@ -1,0 +1,11 @@
+# Logs
+logs
+*.log
+
+# Runtime data
+node_modules
+.DS_Store
+dist
+*.local
+
+config.env
