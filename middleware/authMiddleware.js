@@ -26,7 +26,7 @@ const getTokenFromHeaders = (headers) => {
 };
 
 // 產生 JWT token 並回傳會員資料
-const generateAndSendJWT = (res, statusCode, user) => {
+const generateAndSendJWT = (res, statusCode, user, options = {}) => {
   // 產生 token
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_DAY,
@@ -34,6 +34,7 @@ const generateAndSendJWT = (res, statusCode, user) => {
 
   // 將傳入的密碼清空，避免不小心外洩
   user.password = undefined;
+
   const data = {
     token,
     user: {
@@ -45,6 +46,14 @@ const generateAndSendJWT = (res, statusCode, user) => {
       description: user.description,
     },
   };
+
+  if (options.needFollowing === true) {
+    data.user.following = user.following || [];
+  }
+
+  if (options.isAdmin === true) {
+    data.user.role = user.role || "admin";
+  }
 
   successHandler(res, statusCode, data);
 };

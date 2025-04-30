@@ -60,7 +60,7 @@ const UserControllers = {
     });
 
     // 產生 JWT token 並回傳會員資料
-    generateAndSendJWT(res, 201, newUser);
+    generateAndSendJWT(res, 201, newUser, { needFollowing: true });
   },
 
   // 登入
@@ -103,7 +103,7 @@ const UserControllers = {
     }
 
     // 產生 JWT token 並回傳會員資料
-    generateAndSendJWT(res, 200, user);
+    generateAndSendJWT(res, 200, user, { needFollowing: true });
   },
 };
 
