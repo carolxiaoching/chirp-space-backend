@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const UserControllers = require("../../controllers/user/userControllers");
+const UserControllers = require("../../controllers/user/user");
 const errorAsyncHandler = require("../../services/errorAsyncHandler");
 const {
   checkTokenAndSetAuth,
@@ -51,6 +51,22 @@ router.delete(
   checkTokenAndSetAuth,
   getUserFromAuthId,
   errorAsyncHandler(UserControllers.deleteFollow)
+);
+
+// 取得指定會員追蹤名單
+router.get(
+  "/user/:userId/following",
+  errorAsyncHandler((req, res, next) =>
+    UserControllers.getFollowList(req, res, next, "following")
+  )
+);
+
+// 取得指定會員粉絲名單
+router.get(
+  "/user/:userId/followers",
+  errorAsyncHandler((req, res, next) =>
+    UserControllers.getFollowList(req, res, next, "followers")
+  )
 );
 
 // 取得指定會員資料

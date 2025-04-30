@@ -111,7 +111,7 @@ const UserControllers = {
   async getMyProfile(req, res, next) {
     const { auth } = req;
     const user = await User.findById(auth._id).select(
-      "+email +following +follows"
+      "+email +following +followers"
     );
 
     successHandler(res, 200, user);
@@ -266,11 +266,11 @@ const UserControllers = {
       }
     );
 
-    // 從對方的 follows 陣列中移除自己
+    // 從對方的 followers 陣列中移除自己
     await User.updateOne(
       { _id: userId },
       {
-        $addToSet: { follows: { user: myId } },
+        $addToSet: { followers: { user: myId } },
         $inc: { followersCount: 1 },
       }
     );
@@ -318,16 +318,40 @@ const UserControllers = {
       }
     );
 
-    // 在對方的 follows 陣列中刪除自己 id
+    // 在對方的 followers 陣列中刪除自己 id
     await User.updateOne(
       { _id: userId },
       {
-        $pull: { follows: { user: myId } },
+        $pull: { followers: { user: myId } },
         $inc: { followersCount: -1 },
       }
     );
 
     successHandler(res, 201, "取消追蹤成功");
+  },
+
+  // 取得指定會員追蹤名單或粉絲名單
+  async getFollowList(req, res, next, type) {
+    const { userId } = req.params;
+
+    if (!mongoose.isObjectIdOrHexString(userId)) {
+      return appError(400, "查無此會員！", next);
+    }
+
+    // 找到 user 資料，並依照 type 顯示 following / followers 屬性
+    const user = await User.findById(userId).populate({
+      path: type,
+      populate: {
+        path: "user",
+        select: "nickName avatarImgUrl",
+      },
+    });
+
+    if (!user) {
+      return appError(400, "查無此會員 ID！", next);
+    }
+
+    successHandler(res, 200, user[type]);
   },
 
   // 取得指定會員資料
@@ -342,7 +366,7 @@ const UserControllers = {
       return appError(400, "查無此會員！", next);
     }
 
-    const user = await User.findById(userId).select("+following +follows");
+    const user = await User.findById(userId).select("+following +followers");
 
     successHandler(res, 200, user);
   },

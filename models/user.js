@@ -56,7 +56,7 @@ const userSchema = new mongoose.Schema(
       select: false,
     },
     // 追蹤我的人
-    follows: {
+    followers: {
       type: [
         {
           user: {
