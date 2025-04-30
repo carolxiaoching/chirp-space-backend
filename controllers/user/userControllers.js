@@ -105,6 +105,33 @@ const UserControllers = {
     // 產生 JWT token 並回傳會員資料
     generateAndSendJWT(res, 200, user, { needFollowing: true });
   },
+
+  // 取得我的資料
+  async getMyProfile(req, res, next) {
+    const { auth } = req;
+    const user = await User.findById(auth._id).select(
+      "+email +following +follows"
+    );
+
+    successHandler(res, 200, user);
+  },
+
+  // 取得指定會員資料
+  async getUserProfile(req, res, next) {
+    const { userId } = req.params;
+
+    if (!validationUtils.isValidObjectId(userId)) {
+      return appError(400, "會員 ID 錯誤！", next);
+    }
+
+    if (!(await validationUtils.isIdExist(User, userId))) {
+      return appError(400, "查無此會員！", next);
+    }
+
+    const user = await User.findById(userId).select("+following +follows");
+
+    successHandler(res, 200, user);
+  },
 };
 
 module.exports = UserControllers;
