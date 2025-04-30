@@ -116,6 +116,66 @@ const UserControllers = {
     successHandler(res, 200, user);
   },
 
+  // 更新我的資料
+  async updateMyProfile(req, res, next) {
+    const { auth } = req;
+    const { nickName, gender, avatarImgUrl, description } = req.body;
+
+    const validations = [
+      {
+        condition: !validationUtils.isObjectEmpty(req.body),
+        message: "欄位不得為空！",
+      },
+      {
+        condition:
+          nickName !== undefined &&
+          !validationUtils.isValidString(nickName, 2, 10),
+        message: "暱稱需介於 2 到 10 個字元之間！",
+      },
+      {
+        condition:
+          gender !== undefined &&
+          !["secret", "male", "female"].includes(gender),
+        message: "性別欄位錯誤！",
+      },
+      {
+        condition:
+          avatarImgUrl !== undefined &&
+          !validationUtils.isValidUrl(avatarImgUrl),
+        message: "頭像格式錯誤！",
+      },
+      {
+        condition:
+          description !== undefined &&
+          !validationUtils.isValidString(description, 1, 100),
+        message: "自我介紹需小於 100 個字元！",
+      },
+    ];
+
+    const validationError = await validationUtils.checkValidation(validations);
+
+    if (validationError) {
+      return appError(400, validationError, next);
+    }
+
+    const newUser = await User.findByIdAndUpdate(
+      auth._id,
+      {
+        nickName,
+        gender,
+        avatarImgUrl,
+        description,
+      },
+      {
+        new: true,
+        runValidators: true,
+        fields: "+email",
+      }
+    );
+
+    successHandler(res, 200, newUser);
+  },
+
   // 取得指定會員資料
   async getUserProfile(req, res, next) {
     const { userId } = req.params;

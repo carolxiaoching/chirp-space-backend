@@ -21,6 +21,14 @@ router.get(
   errorAsyncHandler(UserControllers.getMyProfile)
 );
 
+// 更新我的資料
+router.patch(
+  "/user/me",
+  checkTokenAndSetAuth,
+  getUserFromAuthId,
+  errorAsyncHandler(UserControllers.updateMyProfile)
+);
+
 // 取得指定會員資料
 router.get("/user/:userId", errorAsyncHandler(UserControllers.getUserProfile));
 
