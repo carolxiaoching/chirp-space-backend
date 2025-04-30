@@ -9,8 +9,8 @@ const { resErrorAll } = require("./services/errorHandler");
 
 // 前台
 const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users");
-const postsRouter = require("./routes/posts");
+const usersRouter = require("./routes/user/userRoutes");
+const postsRouter = require("./routes/user/postRoutes");
 
 const app = express();
 
