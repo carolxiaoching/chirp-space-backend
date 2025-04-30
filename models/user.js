@@ -69,6 +69,7 @@ const userSchema = new mongoose.Schema(
           },
         },
       ],
+      default: [],
       select: false,
     },
     // 我追蹤的人
@@ -85,6 +86,7 @@ const userSchema = new mongoose.Schema(
           },
         },
       ],
+      default: [],
       select: false,
     },
     // 貼文數量
