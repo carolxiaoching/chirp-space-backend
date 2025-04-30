@@ -29,6 +29,14 @@ router.patch(
   errorAsyncHandler(UserControllers.updateMyProfile)
 );
 
+// 更新密碼
+router.post(
+  "/user/updatePassword",
+  checkTokenAndSetAuth,
+  getUserFromAuthId,
+  errorAsyncHandler(UserControllers.updatePassword)
+);
+
 // 取得指定會員資料
 router.get("/user/:userId", errorAsyncHandler(UserControllers.getUserProfile));
 

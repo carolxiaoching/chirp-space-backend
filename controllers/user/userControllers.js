@@ -176,6 +176,55 @@ const UserControllers = {
     successHandler(res, 200, newUser);
   },
 
+  // 更新密碼
+  async updatePassword(req, res, next) {
+    const { auth } = req;
+    const { password, confirmPassword } = req.body;
+
+    const validations = [
+      {
+        condition: !validationUtils.isObjectEmpty(req.body),
+        message: "欄位不得為空！",
+      },
+      {
+        condition: !validationUtils.isValidPassword(password),
+        message: "密碼需為英數混合，長度為 8 至 30 個字元！",
+      },
+      {
+        condition: !validationUtils.isValidString(confirmPassword),
+        message: "確認密碼不得為空！",
+      },
+      {
+        condition: password !== confirmPassword,
+        message: "密碼與確認密碼不一致！",
+      },
+    ];
+
+    const validationError = await validationUtils.checkValidation(validations);
+
+    if (validationError) {
+      return appError(400, validationError, next);
+    }
+
+    // 將密碼加密
+    const newPassword = await bcrypt.hash(password, 12);
+
+    // 更新資料庫中密碼
+    const newUser = await User.findByIdAndUpdate(
+      auth._id,
+      {
+        password: newPassword,
+      },
+      {
+        new: true,
+        runValidators: true,
+        fields: "+email",
+      }
+    );
+
+    generateAndSendJWT(res, 200, newUser);
+  },
+
   // 取得指定會員資料
   async getUserProfile(req, res, next) {
     const { userId } = req.params;
