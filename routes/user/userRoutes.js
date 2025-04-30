@@ -37,6 +37,22 @@ router.post(
   errorAsyncHandler(UserControllers.updatePassword)
 );
 
+// 追蹤會員
+router.post(
+  "/user/:userId/follow",
+  checkTokenAndSetAuth,
+  getUserFromAuthId,
+  errorAsyncHandler(UserControllers.createFollow)
+);
+
+// 取消追蹤會員
+router.delete(
+  "/user/:userId/follow",
+  checkTokenAndSetAuth,
+  getUserFromAuthId,
+  errorAsyncHandler(UserControllers.deleteFollow)
+);
+
 // 取得指定會員資料
 router.get("/user/:userId", errorAsyncHandler(UserControllers.getUserProfile));
 

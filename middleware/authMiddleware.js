@@ -52,7 +52,7 @@ const generateAndSendJWT = (res, statusCode, user, options = {}) => {
   }
 
   if (options.isAdmin === true) {
-    data.user.role = user.role || "admin";
+    data.user.role = user.role || "user";
   }
 
   successHandler(res, statusCode, data);
