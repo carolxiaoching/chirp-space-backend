@@ -1,6 +1,6 @@
-const successHandler = require("../services/successHandler");
-const appError = require("../services/appError");
-const Post = require("../models/post");
+const successHandler = require("../../services/successHandler");
+const appError = require("../../services/appError");
+const Post = require("../../models/post");
 
 const PostControllers = {
   async getPosts(req, res, next) {
