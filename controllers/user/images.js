@@ -1,7 +1,10 @@
 const successHandler = require("../../services/successHandler");
 const appError = require("../../services/appError");
 const Image = require("../../models/image");
-const { uploadToCloudinary } = require("../../utils/imageUtils");
+const {
+  uploadToCloudinary,
+  deleteFromCloudinary,
+} = require("../../utils/imageUtils");
 
 const ImageControllers = {
   // 上傳圖片
@@ -66,6 +69,43 @@ const ImageControllers = {
     } catch (err) {
       return appError(500, "圖片上傳失敗，請稍後再試", next);
     }
+  },
+
+  // 刪除圖片
+  async deleteImages(req, res, next) {
+    const { auth } = req;
+    const { imageIds } = req.body;
+
+    // 驗證是否有傳入正確格式
+    if (!Array.isArray(imageIds) || imageIds.length === 0) {
+      return appError(400, "請提供要刪除的圖片 ID 陣列", next);
+    }
+
+    //  驗證圖片是否屬於此會員 以及 圖片 id 是否在 imageIds 中
+    const images = await Image.find({
+      _id: { $in: imageIds },
+      uploadedBy: auth._id,
+    });
+
+    if (images.length === 0) {
+      return appError(400, "找不到可刪除的圖片", next);
+    }
+
+    // 刪除圖片數量，預設為 0
+    let deletedCount = 0;
+
+    for (const img of images) {
+      // 刪除 cloudinary 圖片
+      await deleteFromCloudinary(img.publicId);
+
+      // 刪除 image 資料庫中的圖片資料
+      await Image.findByIdAndDelete(img._id);
+
+      // 刪除成功則 +1
+      deletedCount += 1;
+    }
+
+    return successHandler(res, 200, `圖片刪除成功，共刪除 ${deletedCount} 張`);
   },
 };
 

@@ -50,6 +50,15 @@ const uploadToCloudinary = (buffer, req, file) => {
   });
 };
 
+// 從 Cloudinary 中刪除圖片
+const deleteFromCloudinary = async (publicId) => {
+  if (!publicId) {
+    return;
+  }
+  await cloudinary.uploader.destroy(publicId);
+};
+
 module.exports = {
   uploadToCloudinary,
+  deleteFromCloudinary,
 };

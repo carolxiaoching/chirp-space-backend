@@ -17,4 +17,12 @@ router.post(
   errorAsyncHandler(ImageControllers.uploadImages)
 );
 
+// 刪除圖片
+router.delete(
+  "/images",
+  checkTokenAndSetAuth,
+  getUserFromAuthId,
+  errorAsyncHandler(ImageControllers.deleteImages)
+);
+
 module.exports = router;
