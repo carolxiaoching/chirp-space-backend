@@ -89,6 +89,14 @@ const resErrorAll = (err, req, res, next) => {
     return resErrorProd(err, res);
   }
 
+  // MulterError 錯誤
+  if (err.name === "MulterError") {
+    err.isOperational = true;
+    err.statusCode = 400;
+    err.message = err.message || "圖片上傳失敗，請重新確認格式與大小";
+    return resErrorProd(err, res);
+  }
+
   // 抓取沒捕捉到的錯誤
   resErrorProd(err, res);
 };

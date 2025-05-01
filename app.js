@@ -10,6 +10,7 @@ const { resErrorAll } = require("./services/errorHandler");
 // 前台
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/user/userRoutes");
+const imagesRouter = require("./routes/user/imageRoutes");
 const postsRouter = require("./routes/user/postRoutes");
 
 const app = express();
@@ -38,6 +39,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // 前台
 app.use("/", indexRouter);
 app.use("/api", usersRouter);
+app.use("/api", imagesRouter);
 app.use("/api", postsRouter);
 
 // 404 錯誤
