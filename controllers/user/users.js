@@ -90,7 +90,12 @@ const UserControllers = {
     }
 
     // 取出 user 資料
-    const user = await User.findOne({ email }).select("+password +following");
+    const user = await User.findOne({ email })
+      .select("+password +following")
+      .populate({
+        path: "avatar",
+        select: "imageUrl",
+      });
 
     // 驗證電子郵件是否已註冊
     if (!user) {
@@ -110,9 +115,12 @@ const UserControllers = {
   // 取得我的資料
   async getMyProfile(req, res, next) {
     const { auth } = req;
-    const user = await User.findById(auth._id).select(
-      "+email +following +followers"
-    );
+    const user = await User.findById(auth._id)
+      .select("+email +following +followers")
+      .populate({
+        path: "avatar",
+        select: "imageUrl",
+      });
 
     successHandler(res, 200, user);
   },
@@ -141,8 +149,7 @@ const UserControllers = {
       },
       {
         condition:
-          avatar !== undefined &&
-          !validationUtils.isObjectIdOrHexString(avatar),
+          avatar !== undefined && !validationUtils.isValidObjectId(avatar),
         message: "頭像 ID 錯誤！",
       },
       {
@@ -172,7 +179,10 @@ const UserControllers = {
         runValidators: true,
         fields: "+email",
       }
-    );
+    ).populate({
+      path: "avatar",
+      select: "imageUrl",
+    });
 
     successHandler(res, 200, newUser);
   },
@@ -221,7 +231,10 @@ const UserControllers = {
         runValidators: true,
         fields: "+email",
       }
-    );
+    ).populate({
+      path: "avatar",
+      select: "imageUrl",
+    });
 
     generateAndSendJWT(res, 200, newUser);
   },
@@ -344,6 +357,10 @@ const UserControllers = {
       populate: {
         path: "user",
         select: "nickName avatar",
+        populate: {
+          path: "avatar",
+          select: "imageUrl",
+        },
       },
     });
 
@@ -366,7 +383,12 @@ const UserControllers = {
       return appError(400, "查無此會員！", next);
     }
 
-    const user = await User.findById(userId).select("+following +followers");
+    const user = await User.findById(userId)
+      .select("+following +followers")
+      .populate({
+        path: "avatar",
+        select: "imageUrl",
+      });
 
     successHandler(res, 200, user);
   },
