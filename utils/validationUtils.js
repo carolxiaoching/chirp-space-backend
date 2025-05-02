@@ -37,6 +37,18 @@ const validationUtils = {
     );
   },
 
+  // 驗證圖片陣列是否格式正確
+  isValidImagesArray(images, maxLength = 2) {
+    return (
+      // 必須為陣列，且長度大於 0 且 <= maxLength
+      Array.isArray(images) &&
+      images.length > 0 &&
+      images.length <= maxLength &&
+      // 驗證 imageId 是否為 ObjectId 格式
+      images.every((id) => this.isValidObjectId(id))
+    );
+  },
+
   // 驗證密碼是否有效
   isValidPassword(password) {
     return (
