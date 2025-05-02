@@ -120,7 +120,7 @@ const UserControllers = {
   // 更新我的資料
   async updateMyProfile(req, res, next) {
     const { auth } = req;
-    const { nickName, gender, avatarImgUrl, description } = req.body;
+    const { nickName, gender, avatar, description } = req.body;
 
     const validations = [
       {
@@ -141,9 +141,9 @@ const UserControllers = {
       },
       {
         condition:
-          avatarImgUrl !== undefined &&
-          !validationUtils.isValidUrl(avatarImgUrl),
-        message: "頭像格式錯誤！",
+          avatar !== undefined &&
+          !validationUtils.isObjectIdOrHexString(avatar),
+        message: "頭像 ID 錯誤！",
       },
       {
         condition:
@@ -164,7 +164,7 @@ const UserControllers = {
       {
         nickName,
         gender,
-        avatarImgUrl,
+        avatar,
         description,
       },
       {
@@ -343,7 +343,7 @@ const UserControllers = {
       path: type,
       populate: {
         path: "user",
-        select: "nickName avatarImgUrl",
+        select: "nickName avatar",
       },
     });
 

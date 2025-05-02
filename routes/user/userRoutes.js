@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const UserControllers = require("../../controllers/user/user");
+const UserControllers = require("../../controllers/user/users");
 const errorAsyncHandler = require("../../services/errorAsyncHandler");
 const {
   checkTokenAndSetAuth,
