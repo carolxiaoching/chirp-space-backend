@@ -16,16 +16,8 @@ const postSchema = new mongoose.Schema(
     },
     // 圖片
     images: {
-      type: [
-        {
-          imageUrl: { type: String, required: true },
-          imageId: {
-            type: mongoose.Schema.ObjectId,
-            required: true,
-            ref: "image",
-          },
-        },
-      ],
+      type: [mongoose.Schema.ObjectId],
+      ref: "image",
       validate: {
         validator(value) {
           return value.length <= 2;
