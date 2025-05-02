@@ -27,12 +27,6 @@ const imageSchema = new mongoose.Schema(
       },
       default: "photo",
     },
-    // 所屬貼文
-    usedByPost: {
-      type: mongoose.Schema.ObjectId,
-      ref: "post",
-      default: null,
-    },
   },
   {
     // 不顯示預設在 document 中加上的 __v: 0
