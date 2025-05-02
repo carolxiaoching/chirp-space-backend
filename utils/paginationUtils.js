@@ -1,14 +1,8 @@
 // 將 selectFields 轉成 select 要選擇或排除的欄位字串
 const formatSelectFields = (fields = {}) => {
-  const selectArray = [];
-  Object.entries(fields).forEach(([key, value]) => {
-    if (value === true) {
-      selectArray.push(`+${key}`);
-    } else if (value === false) {
-      selectArray.push(`-${key}`);
-    }
-  });
-  return selectArray.join(" ");
+  return Object.entries(fields)
+    .map(([key, value]) => (value ? `+${key}` : `-${key}`))
+    .join(" ");
 };
 
 // 分頁工具
@@ -16,8 +10,7 @@ const paginationUtils = async ({
   model,
   query = {}, // 查詢條件
   sort = { createdAt: -1 }, // 排序
-  selectFields = {}, // 欄位
-  populate = null, // 關聯
+  selectFields = {}, // 額外顯示或隱藏的欄位
   page = 1, // 現在頁數
   perPage = 10, // 每頁幾筆
 }) => {
@@ -38,7 +31,10 @@ const paginationUtils = async ({
   // 跳過幾筆
   const skip = Math.max(currentPage - 1, 0) * perPage;
 
-  const selectText = formatSelectFields(selectFields);
+  // 額外顯示原本 select: false 的欄位，或隱藏欄位
+  const selectText = Object.keys(selectFields).length
+    ? formatSelectFields(selectFields)
+    : {};
 
   // 建立一個查詢指令
   let findQuery = model
@@ -48,14 +44,8 @@ const paginationUtils = async ({
     .limit(limit)
     .sort(sort);
 
-  if (populate) {
-    findQuery = findQuery.populate(populate);
-  }
-
-  const results = await findQuery;
-
   return {
-    results,
+    findQuery,
     pagination: {
       totalPage,
       currentPage,
