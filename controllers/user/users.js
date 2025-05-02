@@ -90,7 +90,12 @@ const UserControllers = {
     }
 
     // 取出 user 資料
-    const user = await User.findOne({ email }).select("+password +following");
+    const user = await User.findOne({ email })
+      .select("+password +following")
+      .populate({
+        path: "avatar",
+        select: "imageUrl",
+      });
 
     // 驗證電子郵件是否已註冊
     if (!user) {
@@ -110,9 +115,12 @@ const UserControllers = {
   // 取得我的資料
   async getMyProfile(req, res, next) {
     const { auth } = req;
-    const user = await User.findById(auth._id).select(
-      "+email +following +followers"
-    );
+    const user = await User.findById(auth._id)
+      .select("+email +following +followers")
+      .populate({
+        path: "avatar",
+        select: "imageUrl",
+      });
 
     successHandler(res, 200, user);
   },
@@ -120,7 +128,7 @@ const UserControllers = {
   // 更新我的資料
   async updateMyProfile(req, res, next) {
     const { auth } = req;
-    const { nickName, gender, avatarImgUrl, description } = req.body;
+    const { nickName, gender, avatar, description } = req.body;
 
     const validations = [
       {
@@ -141,9 +149,8 @@ const UserControllers = {
       },
       {
         condition:
-          avatarImgUrl !== undefined &&
-          !validationUtils.isValidUrl(avatarImgUrl),
-        message: "頭像格式錯誤！",
+          avatar !== undefined && !validationUtils.isValidObjectId(avatar),
+        message: "頭像 ID 錯誤！",
       },
       {
         condition:
@@ -164,7 +171,7 @@ const UserControllers = {
       {
         nickName,
         gender,
-        avatarImgUrl,
+        avatar,
         description,
       },
       {
@@ -172,7 +179,10 @@ const UserControllers = {
         runValidators: true,
         fields: "+email",
       }
-    );
+    ).populate({
+      path: "avatar",
+      select: "imageUrl",
+    });
 
     successHandler(res, 200, newUser);
   },
@@ -221,7 +231,10 @@ const UserControllers = {
         runValidators: true,
         fields: "+email",
       }
-    );
+    ).populate({
+      path: "avatar",
+      select: "imageUrl",
+    });
 
     generateAndSendJWT(res, 200, newUser);
   },
@@ -343,7 +356,11 @@ const UserControllers = {
       path: type,
       populate: {
         path: "user",
-        select: "nickName avatarImgUrl",
+        select: "nickName avatar",
+        populate: {
+          path: "avatar",
+          select: "imageUrl",
+        },
       },
     });
 
@@ -366,7 +383,12 @@ const UserControllers = {
       return appError(400, "查無此會員！", next);
     }
 
-    const user = await User.findById(userId).select("+following +followers");
+    const user = await User.findById(userId)
+      .select("+following +followers")
+      .populate({
+        path: "avatar",
+        select: "imageUrl",
+      });
 
     successHandler(res, 200, user);
   },

@@ -41,7 +41,7 @@ const generateAndSendJWT = (res, statusCode, user, options = {}) => {
       _id: user._id,
       nickName: user.nickName,
       email: user.email,
-      avatarImgUrl: user.avatarImgUrl,
+      avatar: user.avatar,
       gender: user.gender,
       description: user.description,
     },
