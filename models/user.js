@@ -14,9 +14,10 @@ const userSchema = new mongoose.Schema(
       },
       default: "secret",
     },
-    avatarImgUrl: {
-      type: String,
-      default: "",
+    avatar: {
+      type: mongoose.Schema.ObjectId,
+      ref: "image",
+      default: null,
     },
     description: {
       type: String,
