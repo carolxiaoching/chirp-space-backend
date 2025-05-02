@@ -10,6 +10,9 @@ const {
 // 取得所有貼文
 router.get("/posts", errorAsyncHandler(PostControllers.getPosts));
 
+// 取得指定貼文
+router.get("/post/:postId", errorAsyncHandler(PostControllers.getPost));
+
 // 新增貼文
 router.post(
   "/post",

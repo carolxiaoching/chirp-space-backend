@@ -47,6 +47,36 @@ const PostControllers = {
     successHandler(res, 200, { posts, pagination });
   },
 
+  // 取得指定貼文
+  async getPost(req, res, next) {
+    const { postId } = req.params;
+
+    if (!validationUtils.isValidObjectId(postId)) {
+      return appError(400, "貼文 ID 錯誤！", next);
+    }
+
+    const post = await Post.findById(postId)
+      .populate({
+        path: "user",
+        select: "nickName avatar",
+        populate: {
+          path: "avatar",
+          select: "imageUrl",
+        },
+      })
+      .populate({
+        path: "images",
+        select: "imageUrl",
+      });
+
+    // 檢查是否查找到貼文
+    if (!post) {
+      return appError(404, "查無此貼文！", next);
+    }
+
+    successHandler(res, 200, post);
+  },
+
   // 新增貼文
   async createPost(req, res, next) {
     const { auth } = req;
