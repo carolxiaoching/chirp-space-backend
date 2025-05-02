@@ -7,6 +7,9 @@ const {
   getUserFromAuthId,
 } = require("../../middleware/authMiddleware");
 
+// 取得所有貼文
+router.get("/posts", errorAsyncHandler(PostControllers.getPosts));
+
 // 新增貼文
 router.post(
   "/post",

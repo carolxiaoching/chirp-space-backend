@@ -2,8 +2,51 @@ const successHandler = require("../../services/successHandler");
 const appError = require("../../services/appError");
 const Post = require("../../models/post");
 const validationUtils = require("../../utils/validationUtils");
+const paginationUtils = require("../../utils/paginationUtils");
 
 const PostControllers = {
+  // 取得所有貼文
+  async getPosts(req, res, next) {
+    // 第幾頁，預設為 1
+    const page = Number(req.query.page) || 1;
+
+    // 每頁幾筆，預設為 10
+    const perPage = Number(req.query.perPage) || 10;
+
+    // 預設搜尋條件
+    const query = {};
+
+    // 關鍵字搜尋
+    if (req.query.keyword) {
+      query.content = new RegExp(req.query.keyword);
+    }
+
+    const { findQuery, pagination } = await paginationUtils({
+      model: Post,
+      query,
+      sort: { createdAt: -1 },
+      selectFields: {},
+      page,
+      perPage,
+    });
+
+    const posts = await findQuery
+      .populate({
+        path: "user",
+        select: "nickName avatar",
+        populate: {
+          path: "avatar",
+          select: "imageUrl",
+        },
+      })
+      .populate({
+        path: "images",
+        select: "imageUrl",
+      });
+
+    successHandler(res, 200, { posts, pagination });
+  },
+
   // 新增貼文
   async createPost(req, res, next) {
     const { auth } = req;
