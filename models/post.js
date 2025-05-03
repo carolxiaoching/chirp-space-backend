@@ -28,12 +28,8 @@ const postSchema = new mongoose.Schema(
     },
     // 按讚的人
     likes: {
-      type: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: "user",
-        },
-      ],
+      type: [mongoose.Schema.ObjectId],
+      ref: "user",
       default: [],
     },
     // 評論數量
