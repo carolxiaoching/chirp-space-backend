@@ -75,6 +75,12 @@ router.get(
   errorAsyncHandler(UserControllers.getUserPosts)
 );
 
+// 取得指定會員所有按讚貼文
+router.get(
+  "/user/:userId/likes",
+  errorAsyncHandler(UserControllers.getUserLikedPosts)
+);
+
 // 取得指定會員所有評論
 router.get(
   "/user/:userId/comments",
