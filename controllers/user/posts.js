@@ -245,6 +245,50 @@ const PostControllers = {
     successHandler(res, 201, data);
   },
 
+  // 取得指定貼文的所有評論
+  async getPostComments(req, res, next) {
+    const { postId } = req.params;
+
+    if (!validationUtils.isValidObjectId(postId)) {
+      return appError(400, "貼文 ID 格式錯誤！", next);
+    }
+
+    // 驗證此貼文 ID 使否存在
+    const isExist = await Post.findById(postId).exec();
+    if (!isExist) {
+      return appError(400, "取得評論失敗，查無此貼文 ID！", next);
+    }
+
+    // 第幾頁，預設為 1
+    const page = Number(req.query.page) || 1;
+
+    // 每頁幾筆，預設為 10
+    const perPage = Number(req.query.perPage) || 10;
+
+    // 預設搜尋條件，預設為貼文 ID
+    const query = { post: postId };
+
+    const { findQuery, pagination } = await paginationUtils({
+      model: Comment,
+      query,
+      sort: { createdAt: -1 },
+      selectFields: {},
+      page,
+      perPage,
+    });
+
+    const comments = await findQuery.populate({
+      path: "user",
+      select: "nickName avatar",
+      populate: {
+        path: "avatar",
+        select: "imageUrl",
+      },
+    });
+
+    successHandler(res, 200, { comments, pagination });
+  },
+
   // 新增評論
   async createComment(req, res, next) {
     const { auth } = req;

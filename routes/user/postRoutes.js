@@ -34,6 +34,12 @@ router.delete(
   errorAsyncHandler(PostControllers.deleteLike)
 );
 
+// 取得指定貼文的所有評論
+router.get(
+  "/post/:postId/comments",
+  errorAsyncHandler(PostControllers.getPostComments)
+);
+
 // 新增評論
 router.post(
   "/post/:postId/comment",
