@@ -34,6 +34,14 @@ router.delete(
   errorAsyncHandler(PostControllers.deleteLike)
 );
 
+// 新增評論
+router.post(
+  "/post/:postId/comment",
+  checkTokenAndSetAuth,
+  getUserFromAuthId,
+  errorAsyncHandler(PostControllers.createComment)
+);
+
 // 刪除貼文
 router.delete(
   "/post/:postId",

@@ -3,9 +3,10 @@ const successHandler = require("../../services/successHandler");
 const appError = require("../../services/appError");
 const validationUtils = require("../../utils/validationUtils");
 const paginationUtils = require("../../utils/paginationUtils");
+const { deleteFromCloudinary } = require("../../utils/imageUtils");
 const Post = require("../../models/post");
 const Image = require("../../models/image");
-const { deleteFromCloudinary } = require("../../utils/imageUtils");
+const Comment = require("../../models/comment");
 
 const PostControllers = {
   // 取得所有貼文
@@ -238,6 +239,67 @@ const PostControllers = {
     };
 
     successHandler(res, 201, data);
+  },
+
+  // 新增評論
+  async createComment(req, res, next) {
+    const { auth } = req;
+    const { postId } = req.params;
+    const { content } = req.body;
+
+    // 驗證 ObjectId 格式
+    if (!mongoose.isObjectIdOrHexString(postId)) {
+      return appError(400, "查無此貼文！", next);
+    }
+
+    // 驗證此貼文 ID 使否存在
+    const isExist = await Post.findById(postId).exec();
+    if (!isExist) {
+      return appError(400, "新增評論失敗，查無此貼文 ID！", next);
+    }
+
+    const validations = [
+      {
+        condition: !validationUtils.isObjectEmpty(req.body),
+        message: "欄位不得為空！",
+      },
+      {
+        condition: !validationUtils.isValidString(content, 1, 150),
+        message: "貼文內容欄位錯誤，且需介於 1 到 150 個字元之間！",
+      },
+    ];
+
+    const validationError = await validationUtils.checkValidation(validations);
+
+    if (validationError) {
+      return appError(400, validationError, next);
+    }
+
+    const newComment = await Comment.create({
+      user: auth._id,
+      post: postId,
+      content,
+    });
+
+    if (!newComment) {
+      return appError(400, "新增評論失敗！", next);
+    }
+
+    await newComment.populate({
+      path: "user",
+      select: "nickName avatar",
+      populate: {
+        path: "avatar",
+        select: "imageUrl",
+      },
+    });
+
+    // 貼文評論數 +1
+    await Post.findByIdAndUpdate(postId, {
+      $inc: { commentsCount: 1 },
+    });
+
+    successHandler(res, 200, newComment);
   },
 
   // 刪除貼文
