@@ -120,6 +120,10 @@ const PostControllers = {
       images,
     });
 
+    if (!newPost) {
+      return appError(400, "新增貼文失敗！", next);
+    }
+
     const post = await Post.findById(newPost._id)
       .populate({
         path: "user",
