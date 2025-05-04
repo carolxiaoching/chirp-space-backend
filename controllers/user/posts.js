@@ -371,14 +371,15 @@ const PostControllers = {
     }
 
     // 刪除貼文
-    const delPost = await Post.findByIdAndDelete(postId, {
-      new: true,
-    });
+    const delPost = await Post.findByIdAndDelete(postId);
 
-    // 若刪除失敗
+    // 若刪除貼文失敗
     if (!delPost) {
-      return appError(400, "刪除失敗，查無此貼文 ID", next);
+      return appError(400, "刪除貼文失敗", next);
     }
+
+    // 刪除此貼文的所有評論
+    await Comment.deleteMany({ post: postId });
 
     // 取得貼文中的圖片陣列，如果圖片陣列有值，則將內部 Object ID 格式改成字串
     const images = delPost.images
