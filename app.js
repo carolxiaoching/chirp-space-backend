@@ -12,6 +12,7 @@ const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/user/userRoutes");
 const imagesRouter = require("./routes/user/imageRoutes");
 const postsRouter = require("./routes/user/postRoutes");
+const commentsRouter = require("./routes/user/commentRoutes");
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.use("/", indexRouter);
 app.use("/api", usersRouter);
 app.use("/api", imagesRouter);
 app.use("/api", postsRouter);
+app.use("/api", commentsRouter);
 
 // 404 錯誤
 app.use(notFound);
