@@ -69,6 +69,12 @@ router.get(
   )
 );
 
+// 取得指定會員所有貼文
+router.get(
+  "/user/:userId/posts",
+  errorAsyncHandler(UserControllers.getUserPosts)
+);
+
 // 取得指定會員所有評論
 router.get(
   "/user/:userId/comments",
