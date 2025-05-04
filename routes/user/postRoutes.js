@@ -10,9 +10,6 @@ const {
 // 取得所有貼文
 router.get("/posts", errorAsyncHandler(PostControllers.getPosts));
 
-// 取得指定貼文
-router.get("/post/:postId", errorAsyncHandler(PostControllers.getPost));
-
 // 新增貼文
 router.post(
   "/post",
@@ -20,5 +17,24 @@ router.post(
   getUserFromAuthId,
   errorAsyncHandler(PostControllers.createPost)
 );
+
+// 按讚貼文
+router.post(
+  "/post/:postId/like",
+  checkTokenAndSetAuth,
+  getUserFromAuthId,
+  errorAsyncHandler(PostControllers.createLike)
+);
+
+// 取消按讚貼文
+router.delete(
+  "/post/:postId/like",
+  checkTokenAndSetAuth,
+  getUserFromAuthId,
+  errorAsyncHandler(PostControllers.deleteLike)
+);
+
+// 取得指定貼文
+router.get("/post/:postId", errorAsyncHandler(PostControllers.getPost));
 
 module.exports = router;
