@@ -4,6 +4,8 @@ const appError = require("../../services/appError");
 const validationUtils = require("../../utils/validationUtils");
 const paginationUtils = require("../../utils/paginationUtils");
 const Post = require("../../models/post");
+const Image = require("../../models/image");
+const { deleteFromCloudinary } = require("../../utils/imageUtils");
 
 const PostControllers = {
   // 取得所有貼文
@@ -231,6 +233,66 @@ const PostControllers = {
     };
 
     successHandler(res, 201, data);
+  },
+
+  // 刪除貼文
+  async deletePost(req, res, next) {
+    const { postId } = req.params;
+    const { auth } = req;
+
+    // 驗證 ObjectId 格式
+    if (!validationUtils.isValidObjectId(postId)) {
+      return appError(400, "貼文 ID 錯誤！", next);
+    }
+
+    // 驗證此貼文是否存在且為會員本人的
+    const isExist = await Post.findOne({
+      _id: postId,
+      user: auth._id,
+    }).exec();
+
+    if (!isExist) {
+      return appError(400, "查無此貼文或權限不足！！", next);
+    }
+
+    // 刪除貼文
+    const delPost = await Post.findByIdAndDelete(postId, {
+      new: true,
+    });
+
+    // 若刪除失敗
+    if (!delPost) {
+      return appError(400, "刪除失敗，查無此貼文 ID", next);
+    }
+
+    // 取得貼文中的圖片陣列，如果圖片陣列有值，則將內部 Object ID 格式改成字串
+    const images = delPost.images
+      ? delPost.images.map((imageId) => {
+          return imageId.toString();
+        })
+      : [];
+
+    // 有圖片資料才做刪除圖片動作
+    if (Array.isArray(images) && images.length > 0) {
+      //  取得 屬於此會員 以及 符合圖片 ID 的資料
+      const delImages = await Image.find({
+        _id: { $in: images },
+        uploadedBy: auth._id,
+      });
+
+      // 利用得到的圖片陣列資料去做刪除
+      for (const img of delImages) {
+        // 刪除 cloudinary 圖片
+        await deleteFromCloudinary(img.publicId);
+        // 刪除 image 資料庫中的圖片資料
+        await Image.findByIdAndDelete(img._id);
+      }
+    }
+
+    successHandler(res, 200, {
+      message: "刪除貼文成功",
+      postId: delPost._id,
+    });
   },
 };
 

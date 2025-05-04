@@ -34,6 +34,14 @@ router.delete(
   errorAsyncHandler(PostControllers.deleteLike)
 );
 
+// 刪除貼文
+router.delete(
+  "/post/:postId",
+  checkTokenAndSetAuth,
+  getUserFromAuthId,
+  errorAsyncHandler(PostControllers.deletePost)
+);
+
 // 取得指定貼文
 router.get("/post/:postId", errorAsyncHandler(PostControllers.getPost));
 
