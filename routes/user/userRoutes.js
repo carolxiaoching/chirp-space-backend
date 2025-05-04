@@ -69,6 +69,12 @@ router.get(
   )
 );
 
+// 取得指定會員所有評論
+router.get(
+  "/user/:userId/comments",
+  errorAsyncHandler(UserControllers.getUserComments)
+);
+
 // 取得指定會員資料
 router.get("/user/:userId", errorAsyncHandler(UserControllers.getUserProfile));
 

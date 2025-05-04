@@ -3,8 +3,10 @@ const bcrypt = require("bcryptjs");
 const appError = require("../../services/appError");
 const successHandler = require("../../services/successHandler");
 const validationUtils = require("../../utils/validationUtils");
+const paginationUtils = require("../../utils/paginationUtils");
 const { generateAndSendJWT } = require("../../middleware/authMiddleware");
 const User = require("../../models/user");
+const Comment = require("../../models/comment");
 
 const UserControllers = {
   // 註冊
@@ -369,6 +371,59 @@ const UserControllers = {
     }
 
     successHandler(res, 200, user[type]);
+  },
+
+  // 取得指定會員的所有評論
+  async getUserComments(req, res, next) {
+    const { userId } = req.params;
+
+    if (!validationUtils.isValidObjectId(userId)) {
+      return appError(400, "會員 ID 格式錯誤！", next);
+    }
+
+    // 驗證此會員 ID 使否存在
+    const isExist = await User.findById(userId).exec();
+    if (!isExist) {
+      return appError(400, "取得評論失敗，查無此會員 ID！", next);
+    }
+
+    // 第幾頁，預設為 1
+    const page = Number(req.query.page) || 1;
+
+    // 每頁幾筆，預設為 10
+    const perPage = Number(req.query.perPage) || 10;
+
+    // 預設搜尋條件，預設為會員 ID
+    const query = { user: userId };
+
+    const { findQuery, pagination } = await paginationUtils({
+      model: Comment,
+      query,
+      sort: { createdAt: -1 },
+      selectFields: {},
+      page,
+      perPage,
+    });
+
+    const comments = await findQuery
+      .populate({
+        path: "user",
+        select: "nickName avatar",
+        populate: {
+          path: "avatar",
+          select: "imageUrl",
+        },
+      })
+      .populate({
+        path: "post",
+        select: "content images",
+        populate: {
+          path: "images",
+          select: "imageUrl",
+        },
+      });
+
+    successHandler(res, 200, { comments, pagination });
   },
 
   // 取得指定會員資料
