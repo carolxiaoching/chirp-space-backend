@@ -24,6 +24,11 @@ const PostControllers = {
       query.content = new RegExp(req.query.keyword);
     }
 
+    // 會員搜尋
+    if (req.query.userId) {
+      query.user = req.query.userId;
+    }
+
     const { findQuery, pagination } = await paginationUtils({
       model: Post,
       query,
