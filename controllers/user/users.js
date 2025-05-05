@@ -248,8 +248,8 @@ const UserControllers = {
     const myId = req.authId;
 
     // 驗證 ObjectId 格式
-    if (!mongoose.isObjectIdOrHexString(userId)) {
-      return appError(400, "查無此會員！", next);
+    if (!validationUtils.isValidObjectId(userId)) {
+      return appError(400, "會員 ID 格式錯誤！", next);
     }
 
     if (myId === userId) {
@@ -262,36 +262,79 @@ const UserControllers = {
       return appError(400, "追蹤失敗，查無此會員 ID！", next);
     }
 
-    // 檢查目前是否已追蹤對方
-    const alreadyFollowed = await User.findOne({
-      _id: myId,
-      "following.user": userId,
-    });
+    // 從自己的 following 中新增對方
+    const myFollowing = await User.findOneAndUpdate(
+      {
+        // 自己的 ID
+        _id: myId,
+        // 自己 following 中沒有對方 ID
+        following: {
+          $not: {
+            $elemMatch: { user: userId },
+          },
+        },
+      },
+      {
+        // 將對方 ID 加入自己的 following
+        $addToSet: { following: { user: userId, createdAt: Date.now() } },
+        // 自己追蹤數量 +1
+        $inc: { followingCount: 1 },
+      },
+      {
+        new: true,
+        select: "followingCount", // 只回傳 followingCount、自己 ID
+      }
+    );
 
-    // 若已追蹤
-    if (alreadyFollowed) {
-      return appError(400, "你已經追蹤該會員！", next);
+    // 驗證是否修改成功
+    if (!myFollowing) {
+      return appError(400, "你已經追蹤過該會員！", next);
     }
 
-    // 從自己的 following 陣列中移除對方
-    await User.updateOne(
-      { _id: myId },
+    // 從對方的 followers 中新增自己
+    const userFollowers = await User.findOneAndUpdate(
       {
-        $addToSet: { following: { user: userId } },
-        $inc: { followingCount: 1 },
-      }
-    );
-
-    // 從對方的 followers 陣列中移除自己
-    await User.updateOne(
-      { _id: userId },
+        // 對方的 ID
+        _id: userId,
+        // 對方 followers 中沒有自己的 ID
+        followers: {
+          $not: {
+            $elemMatch: { user: myId },
+          },
+        },
+      },
       {
-        $addToSet: { followers: { user: myId } },
+        // 將自己 ID 加入對方的 followers
+        $addToSet: { followers: { user: myId, createdAt: Date.now() } },
+        // 對方粉絲數量 +1
         $inc: { followersCount: 1 },
+      },
+      {
+        new: true,
+        select: "followersCount", // 只回傳 followersCount、對方 ID
       }
     );
 
-    successHandler(res, 200, "追蹤成功");
+    // 驗證是否修改成功
+    if (!userFollowers) {
+      return appError(400, "你已經追蹤過該會員！", next);
+    }
+
+    const data = {
+      message: "追蹤成功",
+      // 是否追蹤
+      userHasFollowing: true,
+      // 自己 ID
+      fromUserId: myId,
+      // 對方 ID
+      toUserId: userId,
+      // 自己的追蹤數量
+      myFollowingCount: myFollowing.followingCount,
+      // 對方的粉絲數量
+      userFollowersCount: userFollowers.followersCount,
+    };
+
+    successHandler(res, 200, data);
   },
 
   // 取消追蹤會員
@@ -300,8 +343,8 @@ const UserControllers = {
     const myId = req.authId;
 
     // 驗證 ObjectId 格式
-    if (!mongoose.isObjectIdOrHexString(userId)) {
-      return appError(400, "查無此會員！", next);
+    if (!validationUtils.isValidObjectId(userId)) {
+      return appError(400, "會員 ID 格式錯誤！", next);
     }
 
     if (myId === userId) {
@@ -314,36 +357,75 @@ const UserControllers = {
       return appError(400, "取消追蹤失敗，查無此會員 ID！", next);
     }
 
-    // 檢查是否已追蹤過
-    const alreadyFollowing = await User.findOne({
-      _id: myId,
-      "following.user": userId,
-    });
+    // 從自己的 following 中移除對方
+    const myFollowing = await User.findOneAndUpdate(
+      {
+        // 自己的 ID
+        _id: myId,
+        // 自己 following 中有此會員 ID
+        "following.user": userId,
+        // 自己追蹤數必須大於 0，避免造成負數
+        followingCount: { $gt: 0 },
+      },
+      {
+        // 將對方 ID 從自己的 following 移除
+        $pull: { following: { user: userId } },
+        // 自己追蹤數量 -1
+        $inc: { followingCount: -1 },
+      },
+      {
+        new: true,
+        select: "followingCount", // 只回傳 followingCount、自己 ID
+      }
+    );
 
-    // 若未追蹤過
-    if (!alreadyFollowing) {
-      return appError(400, "你尚未追蹤該會員！", next);
+    // 驗證是否修改成功
+    if (!myFollowing) {
+      return appError(400, "你未追蹤過該會員！", next);
     }
 
-    // 在 自己的 following 陣列中刪除對方 id
-    await User.updateOne(
-      { _id: myId },
+    // 從對方的 followers 中移除自己
+    const userFollowers = await User.findOneAndUpdate(
       {
-        $pull: { following: { user: userId } },
-        $inc: { followingCount: -1 },
-      }
-    );
-
-    // 在對方的 followers 陣列中刪除自己 id
-    await User.updateOne(
-      { _id: userId },
+        // 對方的 ID
+        _id: userId,
+        // 對方 followers 中有自己的 ID
+        "followers.user": myId,
+        // 對方粉絲數必須大於 0，避免造成負數
+        followersCount: { $gt: 0 },
+      },
       {
+        // 將自己 ID 從對方的 followers 移除
         $pull: { followers: { user: myId } },
+        // 對方粉絲數量 -1
         $inc: { followersCount: -1 },
+      },
+      {
+        new: true,
+        select: "followersCount", // 只回傳 followersCount、對方 ID
       }
     );
 
-    successHandler(res, 201, "取消追蹤成功");
+    // 驗證是否修改成功
+    if (!userFollowers) {
+      return appError(400, "你未追蹤過該會員！", next);
+    }
+
+    const data = {
+      message: "取消追蹤成功",
+      // 是否追蹤
+      userHasFollowing: false,
+      // 自己 ID
+      fromUserId: myId,
+      // 對方 ID
+      toUserId: userId,
+      // 自己的追蹤數量
+      myFollowingCount: myFollowing.followingCount,
+      // 對方的粉絲數量
+      userFollowersCount: userFollowers.followersCount,
+    };
+
+    successHandler(res, 200, data);
   },
 
   // 取得指定會員追蹤名單或粉絲名單
