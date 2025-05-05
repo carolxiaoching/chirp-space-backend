@@ -350,28 +350,52 @@ const UserControllers = {
   async getFollowList(req, res, next, type) {
     const { userId } = req.params;
 
-    if (!mongoose.isObjectIdOrHexString(userId)) {
+    // 驗證傳入參數
+    if (type !== "following" && type !== "followers") {
+      return appError(400, "查詢類型錯誤！", next);
+    }
+
+    // 驗證 ObjectId 格式
+    if (!validationUtils.isValidObjectId(userId)) {
+      return appError(400, "會員 ID 格式錯誤！", next);
+    }
+
+    // 驗證此會員 ID 是否存在
+    const isExist = await User.findById(userId).exec();
+    if (!isExist) {
       return appError(400, "查無此會員！", next);
     }
 
-    // 找到 user 資料，並依照 type 顯示 following / followers 屬性
-    const user = await User.findById(userId).populate({
-      path: type,
-      populate: {
-        path: "user",
-        select: "nickName avatar",
-        populate: {
-          path: "avatar",
-          select: "imageUrl",
-        },
-      },
-    });
+    // 第幾頁，預設為 1
+    const page = Number(req.query.page) || 1;
 
-    if (!user) {
-      return appError(400, "查無此會員 ID！", next);
+    // 每頁幾筆，預設為 10
+    const perPage = Number(req.query.perPage) || 10;
+
+    // 預設搜尋條件，過濾此會員自己，避免出現在資料中
+    const query = { _id: { $ne: userId } };
+
+    // 查詢該會員追蹤名單 (利用其他會員的 followers 包含此會員 ID 的)
+    if (type === "following") {
+      query["followers.user"] = userId;
+      // 查詢該會員粉絲名單 (利用其他會員的 following 包含此會員 ID 的)
+    } else if (type === "followers") {
+      query["following.user"] = userId;
     }
 
-    successHandler(res, 200, user[type]);
+    const { findQuery, pagination } = await paginationUtils({
+      model: User,
+      query,
+      page,
+      perPage,
+    });
+
+    const users = await findQuery.populate({
+      path: "avatar",
+      select: "imageUrl",
+    });
+
+    successHandler(res, 200, { users, pagination });
   },
 
   // 取得指定會員的所有貼文
