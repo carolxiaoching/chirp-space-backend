@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const ImageControllers = require("../../controllers/user/images");
+const image = require("../../controllers/images");
 const errorAsyncHandler = require("../../services/errorAsyncHandler");
 const {
   checkTokenAndSetAuth,
@@ -8,13 +8,15 @@ const {
 } = require("../../middleware/authMiddleware");
 const { handleImageUpload } = require("../../middleware/imageMiddleware");
 
+// imageBase
+
 // 上傳圖片
 router.post(
   "/images",
   checkTokenAndSetAuth,
   getUserFromAuthId,
   handleImageUpload,
-  errorAsyncHandler(ImageControllers.uploadImages)
+  errorAsyncHandler(image.uploadImages)
 );
 
 // 刪除圖片
@@ -22,7 +24,7 @@ router.delete(
   "/images",
   checkTokenAndSetAuth,
   getUserFromAuthId,
-  errorAsyncHandler(ImageControllers.deleteImages)
+  errorAsyncHandler(image.deleteImages)
 );
 
 module.exports = router;
