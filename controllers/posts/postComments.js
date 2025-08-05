@@ -22,8 +22,8 @@ async function getPostComments(req, res, next) {
   // 第幾頁，預設為 1
   const page = Number(req.query.page) || 1;
 
-  // 每頁幾筆，預設為 10
-  const perPage = Number(req.query.perPage) || 10;
+  // 每頁幾筆，預設為 5
+  const perPage = Number(req.query.perPage) || 5;
 
   // 預設搜尋條件，預設為貼文 ID
   const query = { post: postId };
