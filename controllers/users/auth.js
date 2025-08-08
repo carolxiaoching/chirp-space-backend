@@ -57,6 +57,10 @@ async function signup(req, res, next) {
     password: newPassword,
   });
 
+  if (!newUser) {
+    return appError(400, "註冊會員失敗！", next);
+  }
+
   // 產生 JWT token 並回傳會員資料
   generateAndSendJWT(res, 201, newUser, { needFollowing: true });
 }
