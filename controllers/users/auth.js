@@ -57,6 +57,10 @@ async function signup(req, res, next) {
     password: newPassword,
   });
 
+  if (!newUser) {
+    return appError(400, "註冊會員失敗！", next);
+  }
+
   // 產生 JWT token 並回傳會員資料
   generateAndSendJWT(res, 201, newUser, { needFollowing: true });
 }
@@ -88,7 +92,7 @@ async function signin(req, res, next) {
 
   // 取出 user 資料
   const user = await User.findOne({ email })
-    .select("+password +following")
+    .select("+password +following +email")
     .populate({
       path: "avatar",
       select: "imageUrl",
