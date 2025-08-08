@@ -88,7 +88,7 @@ async function signin(req, res, next) {
 
   // 取出 user 資料
   const user = await User.findOne({ email })
-    .select("+password +following")
+    .select("+password +following +email")
     .populate({
       path: "avatar",
       select: "imageUrl",
