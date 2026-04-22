@@ -89,11 +89,19 @@ const resErrorAll = (err, req, res, next) => {
     return resErrorProd(err, res);
   }
 
-  // MulterError 錯誤
+  // Multer 錯誤 - 檔案大小超過限制
+  if (err.name === "MulterError" && err.code === "LIMIT_FILE_SIZE") {
+    err.isOperational = true;
+    err.statusCode = 400;
+    err.message = "檔案大小超過限制，請上傳 1MB 以內的檔案！";
+    return resErrorProd(err, res);
+  }
+
+  // Multer 錯誤 - 其他上傳錯誤（欄位名稱錯誤、檔案數量超過等）
   if (err.name === "MulterError") {
     err.isOperational = true;
     err.statusCode = 400;
-    err.message = err.message || "圖片上傳失敗，請重新確認格式與大小";
+    err.message = "檔案上傳錯誤，請重新確認！";
     return resErrorProd(err, res);
   }
 
