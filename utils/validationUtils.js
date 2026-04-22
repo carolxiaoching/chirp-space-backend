@@ -69,7 +69,7 @@ const validationUtils = {
   },
 
   // 使用驗證規則陣列逐一檢查資料，若任何一個規則的條件為 true，則立即回傳錯誤
-  async checkValidation(validations) {
+  checkValidation(validations) {
     for (const validation of validations) {
       if (validation.condition) {
         return validation.message;
