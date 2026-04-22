@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/carolxiaoching/chrip-space-frontend/refs/heads/develop/assets/images/logo.svg" alt="logo" width="150">
+  <img src="https://raw.githubusercontent.com/carolxiaoching/chirp-space-frontend/refs/heads/develop/assets/images/logo.svg" alt="logo" width="150">
 </p>
 
 <h1 align="center">啾啾 | 後端</h1>
@@ -11,9 +11,9 @@
 </p>
 
 <p align="center">
-  <a href="https://chrip-space-backend.zeabur.app/api-doc/">API 文件</a>
+  <a href="https://chirp-space-backend.zeabur.app/api-doc/">API 文件</a>
   ·
-  <a href="https://github.com/carolxiaoching/chrip-space-frontend">前端 Repo</a>
+  <a href="https://github.com/carolxiaoching/chirp-space-frontend">前端 Repo</a>
 </p>
 
 <p align="center">
@@ -53,8 +53,8 @@
 ## 快速開始
 
 ```bash
-git clone https://github.com/carolxiaoching/chrip-space-backend.git
-cd chrip-space-backend
+git clone https://github.com/carolxiaoching/chirp-space-backend.git
+cd chirp-space-backend
 npm install
 
 # 設定環境變數
@@ -77,7 +77,7 @@ npm run swagger:prod
 ## 專案結構
 
 ```plaintext
-chrip-space-backend
+chirp-space-backend
 │
 ├── connections/
 │   └── index.js                  # MongoDB 連線
@@ -191,4 +191,4 @@ chrip-space-backend
 
 ## Swagger 文件
 
-[https://chrip-space-backend.zeabur.app/api-doc/](https://chrip-space-backend.zeabur.app/api-doc/)
+[https://chirp-space-backend.zeabur.app/api-doc/](https://chirp-space-backend.zeabur.app/api-doc/)
