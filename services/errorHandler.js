@@ -53,7 +53,7 @@ const resErrorAll = (err, req, res, next) => {
   if (err.name === "CastError") {
     err.isOperational = true;
     err.statusCode = 400;
-    err.message = "格示錯誤，請重新確認！";
+    err.message = "格式錯誤，請重新確認！";
     return resErrorProd(err, res);
   }
 
