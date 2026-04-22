@@ -36,7 +36,7 @@ async function createLike(req, res, next) {
     {
       new: true,
       select: "likesCount", // 只回傳 likesCount、貼文 ID
-    }
+    },
   );
 
   // 驗證是否修改成功
@@ -51,7 +51,7 @@ async function createLike(req, res, next) {
     targetUserId: auth._id,
   };
 
-  successHandler(res, 201, data);
+  successHandler(res, 200, data);
 }
 
 // 取消按讚貼文
@@ -76,7 +76,7 @@ async function deleteLike(req, res, next) {
       // 指定貼文 ID
       _id: postId,
       // 按讚陣列中有此會員 ID
-      likes: { $in: auth._id },
+      likes: { $in: [auth._id] },
       // 按讚數必須大於 0，避免造成負數
       likesCount: { $gt: 0 },
     },
@@ -89,7 +89,7 @@ async function deleteLike(req, res, next) {
     {
       new: true,
       select: "likesCount", // 只回傳 likesCount、貼文 ID
-    }
+    },
   );
 
   // 驗證是否修改成功
@@ -104,7 +104,7 @@ async function deleteLike(req, res, next) {
     targetUserId: auth._id,
   };
 
-  successHandler(res, 201, data);
+  successHandler(res, 200, data);
 }
 
 module.exports = { createLike, deleteLike };

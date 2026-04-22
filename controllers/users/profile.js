@@ -23,7 +23,7 @@ async function updateMyProfile(req, res, next) {
 
   const validations = [
     {
-      condition: !validationUtils.isObjectEmpty(req.body),
+      condition: !validationUtils.hasContent(req.body),
       message: "欄位不得為空！",
     },
     {
@@ -45,7 +45,7 @@ async function updateMyProfile(req, res, next) {
     {
       condition:
         description !== undefined &&
-        !validationUtils.isValidString(description, 1, 100),
+        !validationUtils.isValidString(description, 0, 100),
       message: "自我介紹需小於 100 個字元！",
     },
   ];
@@ -67,8 +67,8 @@ async function updateMyProfile(req, res, next) {
     {
       new: true,
       runValidators: true,
-      fields: "+email",
-    }
+      select: "+email",
+    },
   ).populate({
     path: "avatar",
     select: "imageUrl",

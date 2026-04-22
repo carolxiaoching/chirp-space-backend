@@ -68,7 +68,7 @@ async function createComment(req, res, next) {
 
   const validations = [
     {
-      condition: !validationUtils.isObjectEmpty(req.body),
+      condition: !validationUtils.hasContent(req.body),
       message: "欄位不得為空！",
     },
     {
@@ -107,7 +107,7 @@ async function createComment(req, res, next) {
     $inc: { commentsCount: 1 },
   });
 
-  successHandler(res, 200, newComment);
+  successHandler(res, 201, newComment);
 }
 
 module.exports = { getPostComments, createComment };

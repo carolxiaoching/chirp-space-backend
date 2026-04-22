@@ -1,5 +1,6 @@
 const path = require("path");
 const multer = require("multer");
+const appError = require("../services/appError");
 
 // 用 memoryStorage 將檔案直接存在 req.files[n].buffer 中
 const storage = multer.memoryStorage();
@@ -17,10 +18,10 @@ const handleImageUpload = multer({
     const ext = path.extname(file.originalname).toLowerCase();
     // 僅限 jpg、png、jpeg、webp 格式
     if (![".jpg", ".jpeg", ".png", ".webp"].includes(ext)) {
-      return cb(new Error("檔案格式僅限為 .jpg、.png、.jpeg、.webp"));
+      return appError(400, "檔案格式僅限為 .jpg、.png、.jpeg、.webp", cb);
     }
     cb(null, true);
   },
-}).any();
+}).array("images", 2);
 
 module.exports = { handleImageUpload };

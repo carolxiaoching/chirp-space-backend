@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
 
-// 因 config.env 並非 dotenv 預設的 .env 檔案名，所以要另外設定 path
-dotenv.config({ path: "./config.env" });
+if (!process.env.DATABASE || !process.env.DATABASE_PASSWORD) {
+  throw new Error("環境變數 DATABASE 或 DATABASE_PASSWORD 未設定");
+}
 
 // 引入 config.env 的環境變數，使用 replace 將 <password> 替換成環境變數 DATABASE_PASSWORD
 const DB = process.env.DATABASE.replace(
   "<password>",
-  process.env.DATABASE_PASSWORD
+  process.env.DATABASE_PASSWORD,
 );
 
 const connectDB = async () => {

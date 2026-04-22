@@ -12,9 +12,7 @@ async function uploadImages(req, res, next) {
   const type = req.query?.type || "photo";
 
   // 取得 input name 為 "images" 的檔案，若無上傳則為空陣列
-  const files = req.files
-    ? req.files.filter((file) => file.fieldname === "images")
-    : [];
+  const files = req.files || [];
 
   // 驗證圖片用途
   if (type !== "photo" && type !== "avatar") {
@@ -45,7 +43,7 @@ async function uploadImages(req, res, next) {
       const { url, publicId } = await uploadToCloudinary(
         file.buffer,
         req,
-        file
+        file,
       );
 
       // 將圖片資料存至資料庫

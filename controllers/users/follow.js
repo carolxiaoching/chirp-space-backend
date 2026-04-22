@@ -15,7 +15,7 @@ async function createFollow(req, res, next) {
   }
 
   if (myId === userId) {
-    return appError(401, "你無法追蹤自己！", next);
+    return appError(400, "你無法追蹤自己！", next);
   }
 
   // 驗證此會員 ID 是否存在
@@ -110,7 +110,7 @@ async function deleteFollow(req, res, next) {
   }
 
   if (myId === userId) {
-    return appError(401, "你無法取消追蹤自己！", next);
+    return appError(400, "你無法取消追蹤自己！", next);
   }
 
   // 驗證此會員 ID 是否存在

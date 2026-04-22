@@ -15,13 +15,13 @@ const paginationUtils = async ({
   perPage = 10, // 每頁幾筆
 }) => {
   // 每頁幾筆
-  const limit = Math.max(Number(perPage), 1);
+  const limit = Math.min(Math.max(Number(perPage), 1), 100);
 
   // 取得資料總數
   const totalResult = await model.countDocuments(query);
 
   // 總共有幾頁
-  const totalPage = Math.max(Math.ceil(totalResult / perPage), 1);
+  const totalPage = Math.max(Math.ceil(totalResult / limit), 1);
 
   // 現在頁數
   let currentPage = Math.max(Number(page), 1);
@@ -29,12 +29,12 @@ const paginationUtils = async ({
   currentPage = currentPage > totalPage ? totalPage : currentPage;
 
   // 跳過幾筆
-  const skip = Math.max(currentPage - 1, 0) * perPage;
+  const skip = Math.max(currentPage - 1, 0) * limit;
 
   // 額外顯示原本 select: false 的欄位，或隱藏欄位
   const selectText = Object.keys(selectFields).length
     ? formatSelectFields(selectFields)
-    : {};
+    : "";
 
   // 建立一個查詢指令
   let findQuery = model

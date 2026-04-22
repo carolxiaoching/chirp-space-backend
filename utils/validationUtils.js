@@ -14,12 +14,12 @@ const validationUtils = {
   },
 
   // 驗證傳入的物件有值
-  isObjectEmpty(object) {
+  hasContent(object) {
     return Object.keys(object).length > 0;
   },
 
   // 驗證字串是否有效，最少 1 個字元，最多 300 字元
-  isValidString(value, minLength = 1, maxLength = 300) {
+  isValidString(value, minLength = 0, maxLength = 300) {
     return (
       typeof value === "string" &&
       validator.isLength(value.trim(), { min: minLength, max: maxLength })
@@ -69,7 +69,7 @@ const validationUtils = {
   },
 
   // 使用驗證規則陣列逐一檢查資料，若任何一個規則的條件為 true，則立即回傳錯誤
-  async checkValidation(validations) {
+  checkValidation(validations) {
     for (const validation of validations) {
       if (validation.condition) {
         return validation.message;
