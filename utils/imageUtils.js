@@ -1,10 +1,6 @@
 const streamifier = require("streamifier");
 const { v4: uuidv4 } = require("uuid");
 const cloudinary = require("cloudinary").v2;
-const dotenv = require("dotenv");
-
-// 因 config.env 並非 dotenv 預設的 .env 檔案名，所以要另外設定 path
-dotenv.config({ path: "./config.env" });
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -42,7 +38,7 @@ const uploadToCloudinary = (buffer, req, file) => {
           url: result.secure_url,
           publicId: result.public_id,
         });
-      }
+      },
     );
 
     // 將 Buffer 轉換成 Stream 格式，並開始傳送資料到 Cloudinary
