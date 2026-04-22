@@ -133,7 +133,7 @@ async function createPost(req, res, next) {
       select: "imageUrl",
     });
 
-  successHandler(res, 200, post);
+  successHandler(res, 201, post);
 }
 
 // 刪除貼文
@@ -153,7 +153,7 @@ async function deletePost(req, res, next) {
   }).exec();
 
   if (!isExist) {
-    return appError(400, "查無此貼文或權限不足！！", next);
+    return appError(400, "查無此貼文或權限不足！", next);
   }
 
   // 刪除貼文

@@ -107,7 +107,7 @@ async function createComment(req, res, next) {
     $inc: { commentsCount: 1 },
   });
 
-  successHandler(res, 200, newComment);
+  successHandler(res, 201, newComment);
 }
 
 module.exports = { getPostComments, createComment };
