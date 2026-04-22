@@ -3,6 +3,8 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
+const swaggerUI = require("swagger-ui-express");
+const swaggerFile = require("./swagger-output.json");
 const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
 
@@ -54,6 +56,7 @@ app.use("/api", usersRouter);
 app.use("/api", imagesRouter);
 app.use("/api", postsRouter);
 app.use("/api", commentsRouter);
+app.use("/api-doc", swaggerUI.serve, swaggerUI.setup(swaggerFile));
 
 // 404 錯誤
 app.use(notFound);
