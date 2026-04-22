@@ -6,6 +6,7 @@ const { deleteFromCloudinary } = require("../../utils/imageUtils");
 const Post = require("../../models/post");
 const Image = require("../../models/image");
 const Comment = require("../../models/comment");
+const User = require("../../models/user");
 
 // 取得所有貼文
 async function getPosts(req, res, next) {
@@ -119,6 +120,9 @@ async function createPost(req, res, next) {
     return appError(400, "新增貼文失敗！", next);
   }
 
+  // 貼文新增成功後，會員的貼文數量加 1
+  await User.findByIdAndUpdate(auth._id, { $inc: { postsCount: 1 } });
+
   const post = await Post.findById(newPost._id)
     .populate({
       path: "user",
@@ -163,6 +167,12 @@ async function deletePost(req, res, next) {
   if (!delPost) {
     return appError(400, "刪除貼文失敗", next);
   }
+
+  // 貼文刪除成功後，會員的貼文數量減 1，但貼文數量不能小於 0
+  await User.findOneAndUpdate(
+    { _id: auth._id, postsCount: { $gt: 0 } },
+    { $inc: { postsCount: -1 } },
+  );
 
   // 刪除此貼文的所有評論
   await Comment.deleteMany({ post: postId });
