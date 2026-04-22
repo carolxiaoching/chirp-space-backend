@@ -19,7 +19,7 @@ const validationUtils = {
   },
 
   // 驗證字串是否有效，最少 1 個字元，最多 300 字元
-  isValidString(value, minLength = 1, maxLength = 300) {
+  isValidString(value, minLength = 0, maxLength = 300) {
     return (
       typeof value === "string" &&
       validator.isLength(value.trim(), { min: minLength, max: maxLength })
