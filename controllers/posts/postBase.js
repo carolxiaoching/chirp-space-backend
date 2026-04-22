@@ -20,7 +20,10 @@ async function getPosts(req, res, next) {
 
   // 關鍵字搜尋
   if (req.query.keyword) {
-    query.content = new RegExp(req.query.keyword);
+    // 把使用者輸入的特殊符號加上轉義斜線，確保以純文字搜尋
+    const escaped = req.query.keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    // i 代表不分大小寫
+    query.content = new RegExp(escaped, "i");
   }
 
   const { findQuery, pagination } = await paginationUtils({
