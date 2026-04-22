@@ -27,7 +27,7 @@ const resErrorProd = (err, res) => {
     // 送出罐頭預設訊息
     res.status(500).send({
       status: "error",
-      message: err.message || "系統錯誤，請聯絡系統管理員",
+      message: "系統錯誤，請聯絡系統管理員",
     });
   }
 };
