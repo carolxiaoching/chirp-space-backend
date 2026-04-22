@@ -14,7 +14,7 @@ const validationUtils = {
   },
 
   // 驗證傳入的物件有值
-  isObjectEmpty(object) {
+  hasContent(object) {
     return Object.keys(object).length > 0;
   },
 

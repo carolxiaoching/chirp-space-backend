@@ -10,7 +10,7 @@ async function signup(req, res, next) {
 
   const validations = [
     {
-      condition: !validationUtils.isObjectEmpty(req.body),
+      condition: !validationUtils.hasContent(req.body),
       message: "欄位不得為空！",
     },
     {
@@ -71,7 +71,7 @@ async function signin(req, res, next) {
 
   const validations = [
     {
-      condition: !validationUtils.isObjectEmpty(req.body),
+      condition: !validationUtils.hasContent(req.body),
       message: "欄位不得為空！",
     },
     {
@@ -120,7 +120,7 @@ async function updatePassword(req, res, next) {
 
   const validations = [
     {
-      condition: !validationUtils.isObjectEmpty(req.body),
+      condition: !validationUtils.hasContent(req.body),
       message: "欄位不得為空！",
     },
     {
@@ -156,7 +156,7 @@ async function updatePassword(req, res, next) {
       new: true,
       runValidators: true,
       fields: "+email",
-    }
+    },
   ).populate({
     path: "avatar",
     select: "imageUrl",

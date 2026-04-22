@@ -68,7 +68,7 @@ async function createComment(req, res, next) {
 
   const validations = [
     {
-      condition: !validationUtils.isObjectEmpty(req.body),
+      condition: !validationUtils.hasContent(req.body),
       message: "欄位不得為空！",
     },
     {
