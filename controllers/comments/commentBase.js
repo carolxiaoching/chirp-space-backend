@@ -21,7 +21,7 @@ async function deleteComment(req, res, next) {
   }).exec();
 
   if (!isExist) {
-    return appError(400, "查無此評論或權限不足！！", next);
+    return appError(400, "查無此評論或權限不足！", next);
   }
 
   // 刪除評論
@@ -47,7 +47,7 @@ async function deleteComment(req, res, next) {
     {
       new: true,
       select: "commentsCount", // 只回傳 commentsCount、貼文 ID
-    }
+    },
   );
 
   // 驗證是否修改成功
