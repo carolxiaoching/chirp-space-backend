@@ -3,14 +3,20 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
+const swaggerUI = require("swagger-ui-express");
+const swaggerFile = require("./swagger-output.json");
+const dotenv = require("dotenv");
+dotenv.config({ path: "./config.env" });
 
 const notFound = require("./services/notFound");
 const { resErrorAll } = require("./services/errorHandler");
 
 // 前台
 const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users");
-const postsRouter = require("./routes/posts");
+const usersRouter = require("./routes/user/userRoutes");
+const imagesRouter = require("./routes/user/imageRoutes");
+const postsRouter = require("./routes/user/postRoutes");
+const commentsRouter = require("./routes/user/commentRoutes");
 
 const app = express();
 
@@ -28,7 +34,16 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: `${
+      process.env.NODE_ENV === "development"
+        ? process.env.BASE_URL_DEV
+        : process.env.BASE_URL_PROD
+    }`,
+    methods: ["GET", "POST", "DELETE", "PATCH"],
+  }),
+);
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -38,7 +53,10 @@ app.use(express.static(path.join(__dirname, "public")));
 // 前台
 app.use("/", indexRouter);
 app.use("/api", usersRouter);
+app.use("/api", imagesRouter);
 app.use("/api", postsRouter);
+app.use("/api", commentsRouter);
+app.use("/api-doc", swaggerUI.serve, swaggerUI.setup(swaggerFile));
 
 // 404 錯誤
 app.use(notFound);

@@ -27,7 +27,7 @@ const resErrorProd = (err, res) => {
     // 送出罐頭預設訊息
     res.status(500).send({
       status: "error",
-      message: err.message || "系統錯誤，請聯絡系統管理員",
+      message: "系統錯誤，請聯絡系統管理員",
     });
   }
 };
@@ -53,7 +53,7 @@ const resErrorAll = (err, req, res, next) => {
   if (err.name === "CastError") {
     err.isOperational = true;
     err.statusCode = 400;
-    err.message = "格示錯誤，請重新確認！";
+    err.message = "格式錯誤，請重新確認！";
     return resErrorProd(err, res);
   }
 
@@ -86,6 +86,22 @@ const resErrorAll = (err, req, res, next) => {
     err.isOperational = true;
     err.statusCode = 401;
     err.message = "登入錯誤，請重新登入";
+    return resErrorProd(err, res);
+  }
+
+  // Multer 錯誤 - 檔案大小超過限制
+  if (err.name === "MulterError" && err.code === "LIMIT_FILE_SIZE") {
+    err.isOperational = true;
+    err.statusCode = 400;
+    err.message = "檔案大小超過限制，請上傳 1MB 以內的檔案！";
+    return resErrorProd(err, res);
+  }
+
+  // Multer 錯誤 - 其他上傳錯誤（欄位名稱錯誤、檔案數量超過等）
+  if (err.name === "MulterError") {
+    err.isOperational = true;
+    err.statusCode = 400;
+    err.message = "檔案上傳錯誤，請重新確認！";
     return resErrorProd(err, res);
   }
 
