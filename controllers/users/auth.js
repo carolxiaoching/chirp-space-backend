@@ -155,7 +155,7 @@ async function updatePassword(req, res, next) {
     {
       new: true,
       runValidators: true,
-      fields: "+email",
+      select: "+email",
     },
   ).populate({
     path: "avatar",
