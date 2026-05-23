@@ -36,11 +36,7 @@ process.on("uncaughtException", (err) => {
 
 app.use(
   cors({
-    origin: `${
-      process.env.NODE_ENV === "development"
-        ? process.env.BASE_URL_DEV
-        : process.env.BASE_URL_PROD
-    }`,
+    origin: [process.env.BASE_URL_PROD, /^http:\/\/localhost(:\d+)?$/],
     methods: ["GET", "POST", "DELETE", "PATCH"],
   }),
 );

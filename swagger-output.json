@@ -7,10 +7,7 @@
   },
   "host": "chirp-space-backend.zeabur.app",
   "basePath": "/",
-  "schemes": [
-    "http",
-    "https"
-  ],
+  "schemes": ["http", "https"],
   "securityDefinitions": {
     "Bearer": {
       "type": "apiKey",
@@ -19,15 +16,21 @@
       "description": "請加上 JWT Token"
     }
   },
-  "consumes": [
-    "application/json"
-  ],
+  "consumes": ["application/json"],
   "paths": {
+    "/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api/user/signup": {
       "post": {
-        "tags": [
-          "User - 認證"
-        ],
+        "tags": ["User - 認證"],
         "summary": "註冊",
         "description": "註冊",
         "parameters": [
@@ -56,12 +59,7 @@
                   "example": "carol123"
                 }
               },
-              "required": [
-                "nickName",
-                "email",
-                "password",
-                "confirmPassword"
-              ]
+              "required": ["nickName", "email", "password", "confirmPassword"]
             }
           }
         ],
@@ -126,9 +124,7 @@
     },
     "/api/user/signin": {
       "post": {
-        "tags": [
-          "User - 認證"
-        ],
+        "tags": ["User - 認證"],
         "summary": "登入",
         "description": "登入",
         "parameters": [
@@ -149,10 +145,7 @@
                   "example": "carol123"
                 }
               },
-              "required": [
-                "email",
-                "password"
-              ]
+              "required": ["email", "password"]
             }
           }
         ],
@@ -217,9 +210,7 @@
     },
     "/api/user/updatePassword": {
       "post": {
-        "tags": [
-          "User - 認證"
-        ],
+        "tags": ["User - 認證"],
         "summary": "重設密碼",
         "description": "重設密碼",
         "parameters": [
@@ -240,10 +231,7 @@
                   "example": "carol123"
                 }
               },
-              "required": [
-                "password",
-                "confirmPassword"
-              ]
+              "required": ["password", "confirmPassword"]
             }
           }
         ],
@@ -308,9 +296,7 @@
     },
     "/api/user/{userId}/follow": {
       "post": {
-        "tags": [
-          "User - 追蹤"
-        ],
+        "tags": ["User - 追蹤"],
         "summary": "追蹤會員",
         "description": "追蹤會員",
         "parameters": [
@@ -375,9 +361,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "User - 追蹤"
-        ],
+        "tags": ["User - 追蹤"],
         "summary": "取消追蹤會員",
         "description": "取消追蹤會員",
         "parameters": [
@@ -444,9 +428,7 @@
     },
     "/api/user/{userId}/following": {
       "get": {
-        "tags": [
-          "User - 追蹤"
-        ],
+        "tags": ["User - 追蹤"],
         "summary": "取得指定會員的追蹤名單",
         "description": "取得指定會員的追蹤名單",
         "parameters": [
@@ -546,9 +528,7 @@
     },
     "/api/user/{userId}/followers": {
       "get": {
-        "tags": [
-          "User - 追蹤"
-        ],
+        "tags": ["User - 追蹤"],
         "summary": "取得指定會員粉絲名單",
         "description": "取得指定會員粉絲名單",
         "parameters": [
@@ -648,9 +628,7 @@
     },
     "/api/user/{userId}/posts": {
       "get": {
-        "tags": [
-          "User - 動態"
-        ],
+        "tags": ["User - 動態"],
         "summary": "取得指定會員所有貼文",
         "description": "取得指定會員所有貼文",
         "parameters": [
@@ -813,9 +791,7 @@
     },
     "/api/user/{userId}/likes": {
       "get": {
-        "tags": [
-          "User - 動態"
-        ],
+        "tags": ["User - 動態"],
         "summary": "取得指定會員所有按讚貼文",
         "description": "取得指定會員所有按讚貼文",
         "parameters": [
@@ -978,9 +954,7 @@
     },
     "/api/user/{userId}/comments": {
       "get": {
-        "tags": [
-          "User - 動態"
-        ],
+        "tags": ["User - 動態"],
         "summary": "取得指定會員所有評論",
         "description": "取得指定會員所有評論",
         "parameters": [
@@ -1143,9 +1117,7 @@
     },
     "/api/user/me": {
       "get": {
-        "tags": [
-          "User - 個人資料"
-        ],
+        "tags": ["User - 個人資料"],
         "summary": "取得我的資料",
         "description": "取得我的資料",
         "responses": {
@@ -1228,9 +1200,7 @@
         ]
       },
       "patch": {
-        "tags": [
-          "User - 個人資料"
-        ],
+        "tags": ["User - 個人資料"],
         "summary": "更新我的資料",
         "description": "更新我的資料",
         "parameters": [
@@ -1322,9 +1292,7 @@
     },
     "/api/user/{userId}": {
       "get": {
-        "tags": [
-          "User - 個人資料"
-        ],
+        "tags": ["User - 個人資料"],
         "summary": "取得指定會員資料",
         "description": "取得指定會員資料",
         "parameters": [
@@ -1409,14 +1377,10 @@
     },
     "/api/images": {
       "post": {
-        "tags": [
-          "Image - 圖片"
-        ],
+        "tags": ["Image - 圖片"],
         "summary": "上傳圖片",
         "description": "上傳圖片",
-        "consumes": [
-          "multipart/form-data"
-        ],
+        "consumes": ["multipart/form-data"],
         "parameters": [
           {
             "name": "type",
@@ -1480,9 +1444,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Image - 圖片"
-        ],
+        "tags": ["Image - 圖片"],
         "summary": "刪除圖片",
         "description": "刪除圖片",
         "parameters": [
@@ -1496,17 +1458,13 @@
               "properties": {
                 "images": {
                   "type": "array",
-                  "example": [
-                    "69e7035853e169a258b16555"
-                  ],
+                  "example": ["69e7035853e169a258b16555"],
                   "items": {
                     "type": "string"
                   }
                 }
               },
-              "required": [
-                "images"
-              ]
+              "required": ["images"]
             }
           }
         ],
@@ -1540,9 +1498,7 @@
     },
     "/api/post/{postId}/like": {
       "post": {
-        "tags": [
-          "Post - 互動"
-        ],
+        "tags": ["Post - 互動"],
         "summary": "按讚貼文",
         "description": "按讚貼文",
         "parameters": [
@@ -1599,9 +1555,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Post - 互動"
-        ],
+        "tags": ["Post - 互動"],
         "summary": "取消按讚貼文",
         "description": "取消按讚貼文",
         "parameters": [
@@ -1660,9 +1614,7 @@
     },
     "/api/post/{postId}/comments": {
       "get": {
-        "tags": [
-          "Post - 互動"
-        ],
+        "tags": ["Post - 互動"],
         "summary": "取得指定貼文的所有評論",
         "description": "取得指定貼文的所有評論",
         "parameters": [
@@ -1811,9 +1763,7 @@
     },
     "/api/post/{postId}/comment": {
       "post": {
-        "tags": [
-          "Post - 互動"
-        ],
+        "tags": ["Post - 互動"],
         "summary": "新增評論",
         "description": "新增評論",
         "parameters": [
@@ -1837,9 +1787,7 @@
                   "example": "測試評論"
                 }
               },
-              "required": [
-                "content"
-              ]
+              "required": ["content"]
             }
           }
         ],
@@ -1916,9 +1864,7 @@
     },
     "/api/posts": {
       "get": {
-        "tags": [
-          "Post - 貼文"
-        ],
+        "tags": ["Post - 貼文"],
         "summary": "取得所有貼文",
         "description": "取得所有貼文",
         "parameters": [
@@ -2074,9 +2020,7 @@
     },
     "/api/post": {
       "post": {
-        "tags": [
-          "Post - 貼文"
-        ],
+        "tags": ["Post - 貼文"],
         "summary": "新增貼文",
         "description": "新增貼文",
         "parameters": [
@@ -2098,9 +2042,7 @@
                   "items": {}
                 }
               },
-              "required": [
-                "content"
-              ]
+              "required": ["content"]
             }
           }
         ],
@@ -2191,9 +2133,7 @@
     },
     "/api/post/{postId}": {
       "delete": {
-        "tags": [
-          "Post - 貼文"
-        ],
+        "tags": ["Post - 貼文"],
         "summary": "刪除貼文",
         "description": "刪除貼文",
         "parameters": [
@@ -2242,9 +2182,7 @@
         ]
       },
       "get": {
-        "tags": [
-          "Post - 貼文"
-        ],
+        "tags": ["Post - 貼文"],
         "summary": "取得指定貼文",
         "description": "取得指定貼文",
         "parameters": [
@@ -2342,9 +2280,7 @@
     },
     "/api/comment/{commentId}": {
       "delete": {
-        "tags": [
-          "Comment - 評論"
-        ],
+        "tags": ["Comment - 評論"],
         "summary": "刪除指定評論",
         "description": "刪除指定評論",
         "parameters": [
